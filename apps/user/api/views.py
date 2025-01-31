@@ -3,17 +3,22 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
-from apps.user.api.serializers import (BookSerializer, OrderSerializer,
-                                       RatingSerializer)
-from apps.user.models import Book, Order, Rating
+from apps.user.api.serializers import (BookSerializer, OrderCreateSerializer,
+                                       OrderSerializer, RatingCreateSerializer,
+                                       RatingSerializer,
+                                       UserCreateUpdateSerializer,
+                                       UsersSerializer)
+from apps.user.models import Book, Order, Rating, User
 from apps.user.permissions import IsAdminUser, IsOperatorUser
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
@@ -45,7 +50,13 @@ class BookViewSet(viewsets.ModelViewSet):
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
+
+    def get_serializer_class(self):
+        if self.request.method not in SAFE_METHODS:
+            return OrderCreateSerializer
+        return super().get_serializer_class()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -78,7 +89,20 @@ class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method not in SAFE_METHODS:
+            return RatingCreateSerializer
+        return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
         request.data['user'] = request.user.id
         return super().create(request, *args, **kwargs)
+
+
+class UsersViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = RatingSerializer
+    permission_classes = [IsAdminUser]
+    serializer_class = UserCreateUpdateSerializer

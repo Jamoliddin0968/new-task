@@ -4,3 +4,5 @@ djangorestframework-simplejwt
 drf-spectacular
 Pillow
 django-filter
+celery
+redis
