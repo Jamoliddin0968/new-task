@@ -1,0 +1,8 @@
+config/db.sqlite3
+*.pyc
+env/
+config/media
+db.sqlite3
+.vscode
+staticfiles
+.env
