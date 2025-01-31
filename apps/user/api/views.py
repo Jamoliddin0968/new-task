@@ -49,7 +49,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().select_related('book', 'user')
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
 

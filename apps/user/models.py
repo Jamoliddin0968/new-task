@@ -66,7 +66,6 @@ class Order(models.Model):
         end_date = self.actual_return_date if self.actual_return_date else timezone.now()
         days_rented = (end_date - self.ordered_date).days or 1
 
-        # Asosiy ijara narxi
         base_rent = self.book.daily_price * days_rented
 
         # Agar muddat o'tgan bo'lsa, jarimani hisoblash
@@ -78,7 +77,7 @@ class Order(models.Model):
             self.fine_amount = 0
 
         self.total_amount = base_rent + self.fine_amount
-        self.last_calculation_date = timezone.now()
+        print(self.total_amount)
         self.save()
 
 
